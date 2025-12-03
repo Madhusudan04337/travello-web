@@ -1,0 +1,444 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Global Tour</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/bootstrap4/bootstrap.min.css'%}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0099cc;
+            --accent: #ffaa00;
+            --dark: #1b264f;
+            --light: #f8f9fa;
+            --border: #e0f7fa;
+            --text: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #0c3a74, #c5bbbb, #0c3a74);
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            color: var(--text);
+        }
+
+        /* Using Bootstrap's container-fluid for full width utilization */
+        .container-fluid {
+            padding: 0 !important;
+        }
+
+        /* Reduced padding to tighten layout */
+        .d-flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            gap: 0;
+        }
+
+        /* Image Column */
+        .col-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        .col-image img {
+            max-width: 100%;
+            height: auto;
+            filter: drop-shadow(8px 8px 20px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Form Column */
+        .col-form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: slideInRight 0.8s ease-out;
+        }
+
+        /* Increased padding for better proportions */
+        .register-card {
+            background: #ccc;
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 40px 35px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        /* Increased card header spacing */
+        .card-header {
+            margin-bottom: 24px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: #666;
+            font-weight: 400;
+            margin: 0;
+        }
+
+        /* Increased form field spacing from 10px to 14px for better breathing room */
+        .form-group {
+            margin-bottom: 14px;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+        .form-group:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Improved input padding from 11px to 13px and increased border visibility */
+        .form-control {
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 13px 14px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            background: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .form-control::placeholder {
+            color: #999;
+            font-weight: 400;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(0, 153, 204, 0.1);
+        }
+
+        .form-control.error {
+            border-color: #ff4757;
+            background: rgba(255, 71, 87, 0.05);
+        }
+
+        .form-control.success {
+            border-color: #2ed573;
+            background: rgba(46, 213, 115, 0.05);
+        }
+
+        .error-message {
+            font-size: 11px;
+            color: #ff4757;
+            margin-top: 2px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Increased button padding and margin */
+        .btn-register {
+            width: 100%;
+            background: linear-gradient(to right, var(--primary), #7279c8);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 13px 20px;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 153, 204, 0.3);
+        }
+
+        .btn-register::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 153, 204, 0.4);
+        }
+
+        .btn-register:hover::before {
+            left: 100%;
+        }
+
+        .btn-register:active {
+            transform: translateY(0);
+        }
+
+        /* Increased footer spacing */
+        .form-footer {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 12px;
+            color: #666;
+            animation: fadeIn 0.8s ease-out 0.7s backwards;
+        }
+
+        .form-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .form-footer a:hover {
+            color: var(--accent);
+        }
+
+        /* Animations */
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive layout using Bootstrap breakpoints */
+        @media (max-width: 992px) {
+            .col-image {
+                display: none;
+            }
+
+            .col-form {
+                flex: 1;
+            }
+
+            .register-card {
+                padding: 30px 25px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .register-card {
+                padding: 25px 20px;
+                border-radius: 12px;
+            }
+
+            .card-title {
+                font-size: 20px;
+            }
+
+            .form-control {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row d-flex-center">
+            <!-- Image Section -->
+            <div class="col-lg-6 col-image">
+                <img src="" alt="Global Tour Illustration" class="img-fluid">
+            </div>
+
+            <!-- Form Section -->
+            <div class="col-lg-6 col-form">
+                <div class="register-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <span style="font-size: 22px;">✈️</span> Global Tour
+                        </h2>
+                        <p class="card-subtitle">Join thousands exploring the world</p>
+                    </div>
+
+                    <form id="registerForm" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                id="username" 
+                                name="username"
+                                placeholder="Username" 
+                                required
+                            >
+                            <div class="error-message"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <input 
+                                type="email" 
+                                class="form-control" 
+                                id="email" 
+                                name="email"
+                                placeholder="Email Address" 
+                                required
+                            >
+                            <div class="error-message"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <input 
+                                type="password" 
+                                class="form-control" 
+                                id="password" 
+                                name="password1"
+                                placeholder="Password" 
+                                required
+                            >
+                            <div class="error-message"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <input 
+                                type="password" 
+                                class="form-control" 
+                                id="confirm_password"
+                                name="password2" 
+                                placeholder="Confirm Password" 
+                                required
+                            >
+                            <div class="error-message"></div>
+                        </div>
+
+                        <button type="submit" class="btn-register">CREATE ACCOUNT</button>
+                    </form>
+
+                    <div class="form-footer">
+                        Already planning a trip? <a href="#">Sign in here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('registerForm');
+        const inputs = form.querySelectorAll('.form-control');
+
+        inputs.forEach(input => {
+            input.addEventListener('blur', validateField);
+            input.addEventListener('input', validateField);
+        });
+
+        function validateField(e) {
+            const field = e.target;
+            const errorMsg = field.parentElement.querySelector('.error-message');
+            let isValid = true;
+            let message = '';
+
+            if (field.id === 'username') {
+                if (field.value.length < 3) {
+                    isValid = false;
+                    message = 'Username must be at least 3 characters';
+                }
+            } else if (field.id === 'email') {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(field.value)) {
+                    isValid = false;
+                    message = 'Please enter a valid email';
+                }
+            } else if (field.id === 'password') {
+                if (field.value.length < 6) {
+                    isValid = false;
+                    message = 'Password must be at least 6 characters';
+                }
+            } else if (field.id === 'confirm_password') {
+                const password = document.getElementById('password').value;
+                if (field.value !== password) {
+                    isValid = false;
+                    message = 'Passwords do not match';
+                }
+            }
+
+            if (isValid && field.value) {
+                field.classList.remove('error');
+                field.classList.add('success');
+                errorMsg.classList.remove('show');
+            } else if (!isValid) {
+                field.classList.remove('success');
+                field.classList.add('error');
+                errorMsg.textContent = message;
+                errorMsg.classList.add('show');
+            } else {
+                field.classList.remove('error', 'success');
+                errorMsg.classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>
