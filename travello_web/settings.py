@@ -6,8 +6,9 @@ from pathlib import Path
 import os
 import dj_database_url
 import cloudinary
-from dotenv import load_dotenv
-load_dotenv()
+if os.path.exists(BASE_DIR / ".env"):
+    from dotenv import load_dotenv
+    load_dotenv()
 
 
 # --------------------------------------------------
@@ -109,9 +110,10 @@ DATABASES = {
         default=os.environ.get("DATABASE_URL"),
         conn_max_age=600,
         ssl_require=not DEBUG,
-        # ssl_require=True,
     )
 }
+
+
 
 
 # --------------------------------------------------
