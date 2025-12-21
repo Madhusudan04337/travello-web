@@ -6,9 +6,7 @@ from pathlib import Path
 import os
 import dj_database_url
 import cloudinary
-if os.path.exists(BASE_DIR / ".env"):
-    from dotenv import load_dotenv
-    load_dotenv()
+
 
 
 # --------------------------------------------------
@@ -16,6 +14,9 @@ if os.path.exists(BASE_DIR / ".env"):
 # --------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+if os.path.exists(BASE_DIR / ".env"):
+    from dotenv import load_dotenv
+    load_dotenv()
 
 # --------------------------------------------------
 # SECURITY
