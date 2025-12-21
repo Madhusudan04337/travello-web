@@ -28,10 +28,7 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = os.environ.get(
-    "ALLOWED_HOSTS",
-    "localhost 127.0.0.1 travello-web-production.up.railway.app"
-).split()
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost 127.0.0.1 travello-web-production.up.railway.app").split()
 
 
 CSRF_TRUSTED_ORIGINS = [
@@ -48,8 +45,8 @@ SECURE_SSL_REDIRECT = not DEBUG
 # APPLICATIONS
 # --------------------------------------------------
 INSTALLED_APPS = [
-    'cloudinary',
     'cloudinary_storage',
+    'cloudinary',
 
     'places.apps.PlacesConfig',
     'accounts',
@@ -110,10 +107,9 @@ DATABASES = {
     "default": dj_database_url.config(
         default=os.environ.get("DATABASE_URL"),
         conn_max_age=600,
-        ssl_require=not DEBUG,
+        ssl_require=True,
     )
 }
-
 
 
 
