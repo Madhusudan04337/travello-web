@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-9_9@lf3@86kug%w71u^2y6-#x=j_-iui(pwqgi_09e#!#cmr0#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "travello-web-production.up.railway.app",
