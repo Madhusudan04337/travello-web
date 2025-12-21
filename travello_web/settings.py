@@ -26,7 +26,8 @@ SECRET_KEY = os.environ.get(
     "django-insecure-unsafe-key-change-in-production"
 )
 
-DEBUG = os.environ.get("DEBUG", "True") == "True"
+# DEBUG = os.environ.get("DEBUG", "True") == "True" 
+DEBUG = True
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost 127.0.0.1 travello-web-production.up.railway.app").split()
 
