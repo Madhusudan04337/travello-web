@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Global Tour</title>
+    <title>Login - Global Tour</title>
     <link rel="stylesheet" type="text/css" href="{% static 'styles/bootstrap4/bootstrap.min.css'%}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
@@ -28,7 +28,6 @@
             align-items: center;
             justify-content: center;
             color: var(--text-dark);
-            padding: 20px 0;
         }
 
         .auth-container {
@@ -38,7 +37,7 @@
             overflow: hidden;
             width: 90%;
             max-width: 1000px;
-            /* Allow height to grow */
+            min-height: 600px;
             display: flex;
             flex-wrap: wrap;
         }
@@ -92,8 +91,8 @@
 
         .promo-image-collage {
             display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            grid-template-rows: 200px 140px;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            grid-template-rows: 100px 120px;
             gap: 5px;
             margin-top: 30px;
             border-radius: 20px;
@@ -112,7 +111,16 @@
         }
 
         /* Specific Layout Classes */
-        .grid-full-height {
+        .grid-tall {
+            grid-row: span 2;
+        }
+
+        .grid-wide {
+            grid-column: span 2;
+        }
+
+        .grid-big {
+            grid-column: span 2;
             grid-row: span 2;
         }
 
@@ -171,6 +179,7 @@
 
         .btn-auth {
             background-color: #6c5ce7;
+            /* Similar purple/blue from example */
             color: white;
             border: none;
             border-radius: 8px;
@@ -200,38 +209,13 @@
             text-decoration: none;
         }
 
-        /* Error Styling */
-        .alert-error-custom {
-            background-color: #fce8e6;
-            border: 1px solid #ea4335;
-            color: #ea4335;
-            font-size: 0.9rem;
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 20px;
-        }
-
-        .error-message {
-            font-size: 0.8rem;
-            color: #ea4335;
-            margin-top: 4px;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-        }
-
-        .form-control.error {
-            border-color: #ea4335;
-        }
-
-
         /* Responsive */
         @media (max-width: 768px) {
             body {
                 padding: 0;
+                /* Remove body padding on mobile */
                 align-items: flex-start;
+                /* Align to top */
             }
 
             .auth-container {
@@ -246,6 +230,7 @@
 
             .auth-promo {
                 padding: 30px;
+                order: -1;
             }
 
             .auth-form-wrapper {
@@ -266,125 +251,64 @@
         <!-- Left Column: Promo / Visuals -->
         <div class="col-md-6 auth-promo">
             <div class="promo-content">
-                <span class="promo-stats">Join Our Community</span>
-                <span class="promo-stats" style="color: #2d3436; font-size: 1rem;">Unlock Best Deals</span>
-                <h1 class="promo-title">Discover<br>New Horizons</h1>
+                <span class="promo-stats">10,000+ Travelers</span>
+                <span class="promo-stats" style="color: #2d3436; font-size: 1rem;">500+ Destinations</span>
+                <h1 class="promo-title">Unlock Your<br>Next Adventure</h1>
 
                 <div class="promo-tags">
-                    <span class="promo-tag">Exclusive Offers</span>
-                    <span class="promo-tag">Top Guides</span>
+                    <span class="promo-tag">Adventures</span>
+                    <span class="promo-tag">Beaches</span>
+                    <span class="promo-tag">Mountains</span>
                 </div>
 
                 <div class="promo-image-collage">
 
-                    <img src="{% static 'images/destination_6.jpg' %}" class="collage-img grid-full-height"
-                        alt="Adventure">
-                    <img src="{% static 'images/news_1.jpg' %}" class="collage-img" alt="Hiking">
-                    <img src="{% static 'images/news_3.jpg' %}" class="collage-img" alt="Culture">
+                    <img src="{% static 'images/destination_1.jpg' %}" class="collage-img grid-tall" alt="Beach Resort">
+                    <img src="{% static 'images/destination_9.jpg' %}" class="collage-img grid-wide"
+                        alt="Scenic Destination">
+                    <img src="{% static 'images/destination_3.jpg' %}" class="collage-img" alt="Vacation Spot">
+                    <img src="{% static 'images/destination_8.jpg' %}" class="collage-img" alt="Travel Adventure">
                 </div>
             </div>
         </div>
 
-        <!-- Right Column: Register Form -->
+        <!-- Right Column: Login Form -->
         <div class="col-md-6 auth-form-wrapper">
             <div class="form-header">
-                <h3 class="form-title">Create Account</h3>
-                <p class="form-subtitle">It's free and only takes a minute</p>
+                <h3 class="form-title">Welcome Back</h3>
+                <p class="form-subtitle">Log in to continue planning your trip</p>
             </div>
 
-            {% if messages %}
             {% for message in messages %}
             <div class="alert alert-{{ message.tags|default:'info' }}"
-                style="padding: 10px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 15px;">
+                style="font-size: 0.9rem; padding: 10px; border-radius: 8px;">
                 {{message}}
             </div>
             {% endfor %}
-            {% endif %}
 
-            {% if form.errors %}
-            <div class="alert-error-custom">
-                <ul style="margin: 0; padding-left: 20px;">
-                    {% for field in form %}
-                    {% for error in field.errors %}
-                    <li><strong>{{ field.label }}:</strong> {{ error }}</li>
-                    {% endfor %}
-                    {% endfor %}
-                    {% for error in form.non_field_errors %}
-                    <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endif %}
-
-            <form id="registerForm" method="post" action="{% url 'register' %}">
+            <form method="post" action="{% url 'login' %}">
                 {% csrf_token %}
 
-                <div class="form-row">
-                    <div class="col-md-6 form-group">
-                        <label class="label-float">First Name</label>
-                        <input type="text" class="form-control" name="first_name" placeholder="First Name" required>
-                    </div>
-                    <div class="col-md-6 form-group">
-                        <label class="label-float">Last Name</label>
-                        <input type="text" class="form-control" name="last_name" placeholder="Last Name" required>
-                    </div>
-                </div>
-
                 <div class="form-group">
-                    <label class="label-float">Email Address</label>
-                    <input type="email" class="form-control" name="email" placeholder="name@example.com"
-                        value="{{ form.email.value|default:'' }}" required>
-                    <div class="error-message"></div>
+                    <label class="label-float">Email</label>
+                    <input type="email" class="form-control" name="email" placeholder="Enter your email" required>
                 </div>
 
                 <div class="form-group">
                     <label class="label-float">Password</label>
-                    <input type="password" class="form-control" id="password" name="password"
-                        placeholder="Create a password" required>
-                    <div class="error-message"></div>
+                    <input type="password" class="form-control" name="password" placeholder="Enter your password"
+                        required>
                 </div>
 
-                <div class="form-group">
-                    <label class="label-float">Confirm Password</label>
-                    <input type="password" class="form-control" id="confirm_password" name="confirm_password"
-                        placeholder="Confirm your password" required>
-                    <div class="error-message"></div>
-                </div>
-
-                <button type="submit" class="btn-auth">Sign Up</button>
+                <button type="submit" class="btn-auth">Log In</button>
             </form>
 
             <div class="form-footer">
-                Already have an account? <a href="{% url 'login' %}">Log in</a>
+                Don't have an account? <a href="{% url 'register' %}">Sign up</a>
             </div>
         </div>
     </div>
 
-    <script>
-        const form = document.getElementById('registerForm');
-        // Simple client-side validation logic similar to before
-        if (form) {
-            const inputs = form.querySelectorAll('input[required]');
-            inputs.forEach(input => {
-                input.addEventListener('blur', () => {
-                    if (!input.value) {
-                        input.classList.add('error');
-                    } else {
-                        input.classList.remove('error');
-                    }
-                });
-            });
-
-            form.addEventListener('submit', function (e) {
-                const p1 = document.getElementById('password').value;
-                const p2 = document.getElementById('confirm_password').value;
-                if (p1 !== p2) {
-                    e.preventDefault();
-                    alert("Passwords do not match!");
-                }
-            });
-        }
-    </script>
 </body>
 
 </html>

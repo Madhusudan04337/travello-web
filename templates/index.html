@@ -1,5 +1,5 @@
 {% load static %}
-<!-- {% static "images" as baseUrl %} -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,6 +22,22 @@
 
 	<div class="super_container">
 
+		<!-- Messages -->
+		{% if messages %}
+		<div class="container"
+			style="position: fixed; top: 100px; left: 50%; transform: translateX(-50%); z-index: 9999; max-width: 600px;">
+			{% for message in messages %}
+			<div class="alert alert-success alert-dismissible fade show" role="alert"
+				style="box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+				{{ message }}
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			{% endfor %}
+		</div>
+		{% endif %}
+
 		<!-- Header -->
 
 		<header class="header">
@@ -30,12 +46,19 @@
 					<div class="col">
 						<div class="header_content d-flex flex-row align-items-center justify-content-start">
 							<div class="header_content_inner d-flex flex-row align-items-end justify-content-start">
-								<div class="logo"><a href="index.html">Travello</a></div>
+								<div class="logo"><a href="{% url 'index' %}">Travello</a></div>
 								<nav class="main_nav">
 									<ul class="d-flex flex-row align-items-start justify-content-start">
-										<li class="active"><a href="index.html">Home</a></li>
+										<li class="active"><a href="{% url 'index' %}">Home</a></li>
 										<li><a href="contact.html">Contact</a></li>
-										<li><a href="accounts/register">Register</a></li>
+										{% if user.is_authenticated %}
+										<li><a href="#" style="pointer-events: none;">Hello, {{ user.first_name }}</a>
+										</li>
+										<li><a href="{% url 'logout' %}">Logout</a></li>
+										{% else %}
+										<li><a href="{% url 'register' %}">Register</a></li>
+										<li><a href="{% url 'login' %}">Login</a></li>
+										{% endif %}
 									</ul>
 								</nav>
 								<div class="header_phone ml-auto">Call us: 00-56 445 678 33</div>
@@ -79,7 +102,13 @@
 				<ul>
 					<li><a href="inex.html">Home</a></li>
 					<li><a href="contact.html">Contact</a></li>
-					<li><a href="accounts/register">Register</a></li>
+					{% if user.is_authenticated %}
+					<li><a href="#">Hello, {{ user.first_name|default:'Traveler' }}</a></li>
+					<li><a href="{% url 'logout' %}">Logout</a></li>
+					{% else %}
+					<li><a href="{% url 'register' %}">Register</a></li>
+					<li><a href="{% url 'login' %}">Login</a></li>
+					{% endif %}
 				</ul>
 			</div>
 			<div class="menu_social">
@@ -275,7 +304,7 @@
 					<div class="col">
 						<div class="destinations_container item_grid">
 
-							{% for dest in  dests %}
+							{% for dest in dests %}
 
 							<!-- Destination -->
 							<div class="destination item">
@@ -458,7 +487,8 @@
 					<!-- News Sidebar -->
 					<div class="col-xl-4">
 						<div class="travello">
-							<div class="background_image" style='background-image:url("{% static "images/travello.jpg" %}")'></div>
+							<div class="background_image"
+								style='background-image:url("{% static "images/travello.jpg" %}")'></div>
 							<div class="travello_content">
 								<div class="travello_content_inner">
 									<div></div>
@@ -482,8 +512,8 @@
 		<!-- Footer -->
 
 		<footer class="footer">
-			<div class="parallax_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/footer_1.jpg' %}"
-				data-speed="0.8"></div>
+			<div class="parallax_background parallax-window" data-parallax="scroll"
+				data-image-src="{% static 'images/footer_1.jpg' %}" data-speed="0.8"></div>
 			<div class="container">
 				<div class="row">
 					<div class="col">
@@ -589,6 +619,13 @@
 	<script src="{% static 'plugins/scrollTo/jquery.scrollTo.min.js'%}"></script>
 	<script src="{% static 'plugins/easing/easing.js'%}"></script>
 	<script src="{% static 'plugins/parallax-js-master/parallax.min.js'%}"></script>
+	<script>
+		$(document).ready(function () {
+			setTimeout(function () {
+				$(".alert").alert('close');
+			}, 3000);
+		});
+	</script>
 	<script src="{% static 'js/custom.js'%}"></script>
 </body>
 
