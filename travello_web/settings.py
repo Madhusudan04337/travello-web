@@ -143,6 +143,9 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+# ✅ REQUIRED FOR CLOUDINARY + DJANGO 6
+STATICFILES_STORAGE = "cloudinary_storage.storage.StaticCloudinaryStorage"
+
 
 # --------------------------------------------------
 # MEDIA FILES (Cloudinary)
