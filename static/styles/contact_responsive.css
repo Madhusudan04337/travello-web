@@ -302,11 +302,7 @@
 		width: 131px;
 		height: 42px;
 		font-size: 14px;
-	}
-	.contact_input
-	{
-		height: 43px;
-	}
+	}s
 	.contact_input::-webkit-input-placeholder
 	{
 		font-size: 13px !important;

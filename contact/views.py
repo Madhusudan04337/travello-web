@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from .models import ContactMessage
 
 def contact(request):
@@ -14,5 +15,8 @@ def contact(request):
             subject=subject,
             message=message
         )
+
+        messages.success(request, "Message sent successfully!")
+        return redirect('contact')
 
     return render(request, "contact.html")
