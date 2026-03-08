@@ -4,141 +4,137 @@
 ![Django](https://img.shields.io/badge/Django-4.2-092E20?style=for-the-badge&logo=django&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white)
-![Railway](https://img.shields.io/badge/Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white)
+![Render](https://img.shields.io/badge/Render-000000?style=for-the-badge&logo=render&logoColor=white)
 
-> **🚀 Live Demo:** [https://travello-web-production.up.railway.app/](https://travello-web-production.up.railway.app/)
+🚀 **Live Demo:** https://travello-web.onrender.com/
 
-**Travello** is a high-performance, full-stack travel booking application designed to provide a seamless experience for travelers to discover and book their dream destinations. Built with robustness and scalability in mind using Django and PostgreSQL.
+Travello is a full-stack travel booking application that allows users to explore destinations and manage travel offers. 
+The system is built with Django and PostgreSQL, providing a scalable backend and a responsive user interface.
 
----
+------------------------------------------------------------
 
-## ✨ Key Features
+✨ KEY FEATURES
 
-*   **🔐 Secure Authentication**: Robust user registration and login system with email validation.
-*   **🖼️ Dynamic Media Engine**: Integrated **Cloudinary** for optimized, high-speed image delivery and storage.
-*   **📂 Content Management**: Powerful admin interface for easy management of destinations, offers, and pricing.
-*   **📱 Responsive Interface**: A fully responsive UI ensuring a flawless experience across mobile, tablet, and desktop devices.
-*   **☁️ Production Ready**: Optimized for cloud deployment on **Railway** with PostgreSQL.
+• Secure Authentication – User registration and login system.  
+• Cloudinary Media Storage – Optimized cloud-based image hosting.  
+• Admin Management – Manage destinations, offers, and prices.  
+• Responsive UI – Mobile, tablet, and desktop compatibility.  
+• Production Deployment – Hosted on Render with PostgreSQL.
 
----
+------------------------------------------------------------
 
-## 🛠️ Technology Stack
+🛠 TECHNOLOGY STACK
 
-| Component | Technology | Description |
-| :--- | :--- | :--- |
-| **Backend** | ![Django](https://img.shields.io/badge/Django-092E20?style=flat-square&logo=django&logoColor=white) | Core application framework |
-| **Database** | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white) | Primary production database |
-| **Media** | ![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=flat-square&logo=cloudinary&logoColor=white) | Cloud-based image management |
-| **Hosting** | ![Railway](https://img.shields.io/badge/Railway-0B0D0E?style=flat-square&logo=railway&logoColor=white) | Cloud deployment platform |
-| **Static Files** | **WhiteNoise** | Efficient static file serving |
+Backend      : Django  
+Database     : PostgreSQL  
+Media        : Cloudinary  
+Hosting      : Render  
+Static Files : WhiteNoise  
 
----
+------------------------------------------------------------
 
-## 📂 Project Architecture
+📂 PROJECT STRUCTURE
 
-A professional, modular structure ensuring maintainability and scalability.
-
-```
 travello_web/
 │
-├── 🔐 accounts/          # Authentication logic (Login, Register, Logout)
-├── 📦 assets/            # Production ready static assets (Collected)
-├── 🖼️ media/             # User uploaded media content
-├── 📍 places/            # Destination management & core logic
-├── 🎨 static/            # Development static files (CSS, JS, Images)
-├── 📑 templates/         # Jinja2 HTML Templates
-├── ⚙️ travello_web/      # Project configuration & Settings
+├── accounts/        Authentication (login, register, logout)
+├── assets/          Production static assets
+├── media/           Uploaded media
+├── places/          Destination logic
+├── static/          CSS / JS / images
+├── templates/       HTML templates
+├── travello_web/    Django settings and configuration
 │
-├── 📝 .env               # Environment configuration
-├── 🐘 db.sqlite3         # Local development database
-├── 🚀 manage.py          # Django CLI utility
-├── 🐳 Procfile           # Production entry point
-└── 📦 requirements.txt   # Project dependencies
-```
+├── .env             Environment variables
+├── db.sqlite3       Local development database
+├── manage.py        Django management utility
+├── Procfile         Production start configuration
+└── requirements.txt Python dependencies
 
-> **Note**: The application uses **SQLite** for local development and switches to **PostgreSQL** automatically in production environments.
+------------------------------------------------------------
 
----
+⚙ LOCAL DEVELOPMENT SETUP
 
-## ⚙️ Local Development Setup
+1. Clone Repository
 
-Follow these steps to get a copy of the project up and running on your local machine.
+git clone https://github.com/Madhusudan04337/travello-web.git
+cd travello-web
 
-### 1. Prerequisites
-*   Python 3.8+
-*   Git
+2. Create Virtual Environment
 
-### 2. Installation
+python -m venv venv
 
-1.  **Clone the Repository**
-    ```bash
-    git clone https://github.com/Madhusudan04337/travello-web.git
-    cd travello-web
-    ```
+Windows:
+venv\Scripts\activate
 
-2.  **Create Virtual Environment**
-    ```bash
-    python -m venv venv
-    # Windows
-    venv\Scripts\activate
-    # Mac/Linux
-    source venv/bin/activate
-    ```
+Mac/Linux:
+source venv/bin/activate
 
-3.  **Install Dependencies**
-    ```bash
-    pip install -r requirements.txt
-    ```
+3. Install Dependencies
 
-4.  **Configure Environment**
-    Create a `.env` file in the root directory:
-    ```env
-    DEBUG=True
-    SECRET_KEY=your_secure_secret_key
-    
-    # Database (Optional for local, uses SQLite default)
-    DATABASE_URL=postgres://user:pass@host:port/db_name
+pip install -r requirements.txt
 
-    # Cloudinary Config (Required for images)
-    CLOUDINARY_CLOUD_NAME=your_cloud_name
-    CLOUDINARY_API_KEY=your_api_key
-    CLOUDINARY_API_SECRET=your_api_secret
-    ```
+4. Configure Environment
 
-5.  **Apply Migrations**
-    ```bash
-    python manage.py migrate
-    ```
+Create a `.env` file in the project root:
 
-6.  **Run Development Server**
-    ```bash
-    python manage.py runserver
-    ```
-    Access the app at `http://127.0.0.1:8000`
+DEBUG=True
+SECRET_KEY=your_secret_key
 
----
+DATABASE_URL=postgres://user:pass@host:port/db_name
 
-## 🚀 Deployment
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
 
-This project is configured for seamless deployment on **Railway**.
+5. Apply Database Migrations
 
-### Deployment Steps
-1.  Push your code to GitHub.
-2.  Connect your repository to **Railway**.
-3.  Add the environment variables (from the `.env` section) in the Railway dashboard.
-4.  Railway will automatically detect the `Procfile` and `requirements.txt` to build and serve the application.
+python manage.py migrate
 
----
+6. Run Development Server
 
-## 👨‍💻 Author
+python manage.py runserver
 
-**Madhusudan S**
-*   🚀 Full Stack Developer
-*   🐍 Django Specialist
-*   🐘 PostgreSQL Expert
+Visit:
+http://127.0.0.1:8000
 
----
+------------------------------------------------------------
 
-<p align="center">
-  Made with ❤️ by Madhusudan S
-</p>
+🚀 DEPLOYMENT (RENDER)
+
+1. Push project to GitHub.
+2. Create a new Web Service on Render.
+3. Connect your GitHub repository.
+4. Add environment variables in Render:
+
+SECRET_KEY=your_secret_key
+DEBUG=False
+DATABASE_URL=your_render_postgres_url
+
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+5. Build Command
+
+pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput
+
+6. Start Command
+
+gunicorn travello_web.wsgi:application
+
+After deployment, your app will be live on Render.
+
+------------------------------------------------------------
+
+👨‍💻 AUTHOR
+
+Madhusudan S  
+Full Stack Developer  
+Django Developer  
+PostgreSQL Enthusiast  
+
+------------------------------------------------------------
+
+Made with ❤️ by Madhusudan S
+"""
