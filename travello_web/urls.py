@@ -8,11 +8,12 @@ from django.conf.urls.static import static
 from accounts import views as account_views
 
 urlpatterns = [
-    path('',include('places.urls')),
+    path('', include('places.urls')),
     path('login/', account_views.login_user, name='login'),
     path('register/', account_views.register, name='register'),
     path('logout/', account_views.logout_user, name='logout'),
     path('admin/', admin.site.urls),
-    path('accounts/',include('accounts.urls'))
+    path('accounts/', include('accounts.urls')),
+    path('contact/', include('contact.urls')),
 ]
-urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

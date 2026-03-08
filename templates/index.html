@@ -49,16 +49,41 @@
 								<div class="logo"><a href="{% url 'index' %}">Travello</a></div>
 								<nav class="main_nav">
 									<ul class="d-flex flex-row align-items-start justify-content-start">
-										<li class="active"><a href="{% url 'index' %}">Home</a></li>
-										<li><a href="contact.html">Contact</a></li>
-										{% if user.is_authenticated %}
-										<li><a href="#" style="pointer-events: none;">Hello, {{ user.first_name }}</a>
+
+										<li
+											class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+											<a href="{% url 'index' %}">Home</a>
 										</li>
-										<li><a href="{% url 'logout' %}">Logout</a></li>
+
+										<li
+											class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
+											<a href="{% url 'contact' %}">Contact</a>
+										</li>
+
+										{% if user.is_authenticated %}
+										<li>
+											<a href="#" style="pointer-events: none;">Hello, {{ user.first_name }}</a>
+										</li>
+
+										<li
+											class="{% if request.resolver_match.url_name == 'logout' %}active{% endif %}">
+											<a href="{% url 'logout' %}">Logout</a>
+										</li>
+
 										{% else %}
-										<li><a href="{% url 'register' %}">Register</a></li>
-										<li><a href="{% url 'login' %}">Login</a></li>
+
+										<li
+											class="{% if request.resolver_match.url_name == 'register' %}active{% endif %}">
+											<a href="{% url 'register' %}">Register</a>
+										</li>
+
+										<li
+											class="{% if request.resolver_match.url_name == 'login' %}active{% endif %}">
+											<a href="{% url 'login' %}">Login</a>
+										</li>
+
 										{% endif %}
+
 									</ul>
 								</nav>
 								<div class="header_phone ml-auto">Call us: 00-56 445 678 33</div>
@@ -100,8 +125,8 @@
 			</div>
 			<div class="menu_content">
 				<ul>
-					<li><a href="inex.html">Home</a></li>
-					<li><a href="contact.html">Contact</a></li>
+					<li><a href="{% url 'index' %}">Home</a></li>
+					<li><a href="{% url 'contact' %}">Contact</a></li>
 					{% if user.is_authenticated %}
 					<li><a href="#">Hello, {{ user.first_name|default:'Traveler' }}</a></li>
 					<li><a href="{% url 'logout' %}">Logout</a></li>

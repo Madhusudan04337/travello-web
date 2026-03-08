@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
     'places.apps.PlacesConfig',
     'accounts',
+    'contact',
 
     'django.contrib.admin',
     'django.contrib.auth',
