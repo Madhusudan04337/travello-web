@@ -16,6 +16,7 @@ The system is built with Django and PostgreSQL, providing a scalable backend and
 ✨ KEY FEATURES
 
 • Secure Authentication – User registration and login system.  
+• Contact Form – Customer inquiry and message management system.
 • Cloudinary Media Storage – Optimized cloud-based image hosting.  
 • Admin Management – Manage destinations, offers, and prices.  
 • Responsive UI – Mobile, tablet, and desktop compatibility.  
@@ -38,6 +39,7 @@ Static Files : WhiteNoise
 travello_web/
 │
 ├── accounts/        Authentication (login, register, logout)
+├── contact/         Contact form and message management
 ├── assets/          Production static assets
 ├── media/           Uploaded media
 ├── places/          Destination logic
