@@ -144,13 +144,54 @@ def login_user(request):
     # Pass next to template so hidden field carries it through POST
     return render(request, 'login.html', {'next': request.GET.get('next', '')})
 
+def reset_password(request, token):
+    try:
+        token_obj = PasswordResetToken.objects.get(token=token)
+
+        if token_obj.is_expired():
+            token_obj.delete()
+            messages.error(request, "Reset link has expired. Please request a new one.")
+            return redirect('login')
+
+    except PasswordResetToken.DoesNotExist:
+        messages.error(request, "Invalid reset link.")
+        return redirect('login')
+
+    if request.method == 'POST':
+        password = request.POST.get('password', '')
+        confirm_password = request.POST.get('confirm_password', '')
+
+        if not password or not confirm_password:
+            messages.error(request, "Please fill in all fields.")
+            return redirect(f'/accounts/login/?form=reset&token={token}')
+
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return redirect(f'/accounts/login/?form=reset&token={token}')
+
+        if len(password) < 8:
+            messages.error(request, "Password must be at least 8 characters.")
+            return redirect(f'/accounts/login/?form=reset&token={token}')
+
+        user = token_obj.user
+        user.set_password(password)
+        user.save()
+        token_obj.delete()
+
+        messages.success(request, "Password reset successful! You can now log in.")
+        return redirect('login')
+
+    return redirect(f'/accounts/login/?form=reset&token={token}')
+
+
 @never_cache
 def logout_user(request):
     logout(request)
     messages.success(request, "Logged out successfully.")
     return redirect('index')
 
-@never_cache  # Prevents back button restoring after logout
+
+@never_cache
 @login_required(login_url='login')
 def index(request):
     return render(request, 'index.html')
