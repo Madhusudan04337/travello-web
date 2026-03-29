@@ -1,24 +1,21 @@
 """
 Django settings for travello_web project.
 """
+
 from pathlib import Path
 import os
 import dj_database_url
 import cloudinary
 from dotenv import load_dotenv
 
-
 # --------------------------------------------------
-# BASE DIR
+# BASE DIR & ENV
 # --------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 if os.path.exists(BASE_DIR / ".env"):
     load_dotenv()
 
-DEBUG = os.environ.get("DEBUG", "True").lower() == "True"
-ALLOWED_HOSTS = ["*"]
-# ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 # --------------------------------------------------
 # SECURITY
 # --------------------------------------------------
@@ -27,18 +24,19 @@ SECRET_KEY = os.environ.get(
     "django-insecure-unsafe-key-change-in-production"
 )
 
+DEBUG = os.environ.get("DEBUG", "True").lower() == "True"
 
-
+ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = [
+    "https://travello-web.onrender.com",
     "https://travello-web-production.up.railway.app",
 ]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
-SECURE_SSL_REDIRECT = not DEBUG
-
 
 # --------------------------------------------------
 # APPLICATIONS
@@ -59,14 +57,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-
 # --------------------------------------------------
 # MIDDLEWARE
 # --------------------------------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -75,12 +71,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 # --------------------------------------------------
 # URL / WSGI
 # --------------------------------------------------
 ROOT_URLCONF = 'travello_web.urls'
+WSGI_APPLICATION = 'travello_web.wsgi.application'
 
+# --------------------------------------------------
+# TEMPLATES
+# --------------------------------------------------
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -97,33 +96,27 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'travello_web.wsgi.application'
-
-
 # --------------------------------------------------
-# DATABASE (Railway PostgreSQL)
+# DATABASE                          ✅ Only once
 # --------------------------------------------------
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 if DATABASE_URL:
-    # ✅ Production — PostgreSQL from environment
     DATABASES = {
         "default": dj_database_url.config(
             default=DATABASE_URL,
             conn_max_age=600,
+            conn_health_checks=True,
             ssl_require=not DEBUG,
         )
     }
 else:
-    # ✅ Fallback — SQLite for local development
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-
-
 
 # --------------------------------------------------
 # PASSWORD VALIDATION
@@ -135,7 +128,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-
 # --------------------------------------------------
 # INTERNATIONALIZATION
 # --------------------------------------------------
@@ -144,20 +136,18 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-
 # --------------------------------------------------
 # STATIC FILES
 # --------------------------------------------------
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / "assets"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-# ✅ REQUIRED FOR CLOUDINARY + DJANGO 6
-STATICFILES_STORAGE = "cloudinary_storage.storage.StaticCloudinaryStorage"
-
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+WHITENOISE_MAX_AGE = 31536000
 
 # --------------------------------------------------
 # MEDIA FILES (Cloudinary)
@@ -165,19 +155,34 @@ STATICFILES_STORAGE = "cloudinary_storage.storage.StaticCloudinaryStorage"
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 MEDIA_URL = '/media/'
 
-
 # --------------------------------------------------
 # CLOUDINARY CONFIG
 # --------------------------------------------------
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+    'SECURE': True,
+}
+
 cloudinary.config(
     cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
     api_key=os.environ.get("CLOUDINARY_API_KEY"),
     api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
+    secure=True,
 )
 
+# --------------------------------------------------
+# CACHING
+# --------------------------------------------------
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "travello-cache",
+    }
+}
 
 # --------------------------------------------------
 # DEFAULT PK
 # --------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-ROOT_URLCONF = 'travello_web.urls'
