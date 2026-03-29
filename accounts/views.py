@@ -38,7 +38,7 @@ def forgot_password(request):
             PasswordResetToken.objects.filter(user=user).delete()
             token_obj = PasswordResetToken.objects.create(user=user)
 
-            reset_url = f"{settings.SITE_URL}/accounts/login/?form=reset&token={token_obj.token}"
+            reset_url = f"{settings.SITE_URL.rstrip('/')}/accounts/login/?form=reset&token={token_obj.token}"
 
             # Send email in background — won't block gunicorn
             thread = threading.Thread(
