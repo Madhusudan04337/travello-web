@@ -1,1 +1,1 @@
-web: gunicorn travello_web.wsgi --workers 2 --threads 4 --timeout 60
+web: gunicorn travello_web.wsgi
