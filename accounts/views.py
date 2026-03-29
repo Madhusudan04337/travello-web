@@ -5,6 +5,77 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 import uuid
+from django.core.mail import send_mail
+from django.conf import settings
+from .models import PasswordResetToken
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+
+        try:
+            user = User.objects.get(email=email)
+            PasswordResetToken.objects.filter(user=user).delete()
+            token_obj = PasswordResetToken.objects.create(user=user)
+
+            # Link points to login page with form=reset&token=xxx
+            reset_url = f"{settings.SITE_URL}/accounts/login/?form=reset&token={token_obj.token}"
+
+            send_mail(
+                subject="Password Reset - Travello",
+                message=f"Click the link to reset your password:\n\n{reset_url}\n\nThis link expires in 15 minutes.",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+        except User.DoesNotExist:
+            pass
+
+        messages.success(request, "If this email exists, a reset link has been sent.")
+        return redirect('login')
+
+    return redirect('login')
+
+def reset_password(request, token):
+    try:
+        token_obj = PasswordResetToken.objects.get(token=token)
+
+        # Check if token is expired
+        if token_obj.is_expired():
+            token_obj.delete()
+            messages.error(request, "Reset link has expired. Please request a new one.")
+            return redirect('forgot_password')
+
+    except PasswordResetToken.DoesNotExist:
+        messages.error(request, "Invalid reset link.")
+        return redirect('forgot_password')
+
+    if request.method == 'POST':
+        password = request.POST.get('password', '')
+        confirm_password = request.POST.get('confirm_password', '')
+
+        if not password or not confirm_password:
+            messages.error(request, "Please fill in all fields.")
+            return render(request, 'reset_password.html', {'token': token})
+
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return render(request, 'reset_password.html', {'token': token})
+
+        if len(password) < 8:
+            messages.error(request, "Password must be at least 8 characters.")
+            return render(request, 'reset_password.html', {'token': token})
+
+        # Set new password and delete token
+        user = token_obj.user
+        user.set_password(password)
+        user.save()
+        token_obj.delete()
+
+        messages.success(request, "Password reset successful! You can now log in.")
+        return redirect('login')
+
+    return render(request, 'reset_password.html', {'token': token})
 
 def register(request):
     if request.user.is_authenticated:
@@ -23,7 +94,7 @@ def register(request):
             'email': email,
         }
 
-        # ✅ Validate all required fields including first_name
+        # Validate all required fields including first_name
         if not all([first_name, email, password]):
             messages.error(request, "Please fill in all required fields.")
             return render(request, 'register.html', {'form_data': form_data})
@@ -32,7 +103,7 @@ def register(request):
             messages.error(request, "Passwords do not match.")
             return render(request, 'register.html', {'form_data': form_data})
 
-        # ✅ Strong password check
+        # Strong password check
         if len(password) < 8:
             messages.error(request, "Password must be at least 8 characters.")
             return render(request, 'register.html', {'form_data': form_data})
@@ -42,7 +113,7 @@ def register(request):
             return render(request, 'register.html', {'form_data': form_data})
 
         try:
-            # ✅ Generate unique username to avoid collision
+            # Generate unique username to avoid collision
             unique_username = f"{first_name.lower()}_{uuid.uuid4().hex[:6]}"
 
             user = User.objects.create_user(
@@ -61,7 +132,6 @@ def register(request):
             return render(request, 'register.html', {'form_data': form_data})
 
     return render(request, 'register.html')
-
 
 def login_user(request):
     if request.user.is_authenticated:

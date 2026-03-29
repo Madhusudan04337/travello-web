@@ -63,7 +63,7 @@ INSTALLED_APPS = [
 # --------------------------------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ Must be second
+    'whitenoise.middleware.WhiteNoiseMiddleware',  
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -75,7 +75,7 @@ MIDDLEWARE = [
 # --------------------------------------------------
 # URL / WSGI
 # --------------------------------------------------
-ROOT_URLCONF = 'travello_web.urls'      # ✅ Only once
+ROOT_URLCONF = 'travello_web.urls'     
 WSGI_APPLICATION = 'travello_web.wsgi.application'
 
 # --------------------------------------------------
@@ -107,7 +107,7 @@ if DATABASE_URL:
         "default": dj_database_url.config(
             default=DATABASE_URL,
             conn_max_age=600,
-            conn_health_checks=True,    # ✅ Drop stale connections
+            conn_health_checks=True,    
             ssl_require=not DEBUG,
         )
     }
@@ -118,6 +118,24 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
+
+# --------------------------------------------------
+# EMAIL CONFIG
+# --------------------------------------------------
+if DEBUG:
+    # Local — prints email in terminal, no Gmail needed
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    # Production — sends real email via Gmail
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+    DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
+
+SITE_URL = os.environ.get('SITE_URL', 'http://127.0.0.1:8000')
 
 # --------------------------------------------------
 # PASSWORD VALIDATION
@@ -141,13 +159,13 @@ USE_TZ = True
 # STATIC FILES
 # --------------------------------------------------
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / "assets"  # ✅ Fixed: was "assets"
+STATIC_ROOT = BASE_DIR / "assets"  
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-# ✅ Standard storage locally, whitenoise in production
+# Standard storage locally, whitenoise in production
 if DEBUG:
     STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 else:
