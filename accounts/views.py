@@ -9,19 +9,25 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .models import PasswordResetToken
 import threading
-
 def send_reset_email(reset_url, email):
     """Runs in background thread — won't block the request"""
     try:
+        print(f"[EMAIL] Attempting to send to: {email}")
+        print(f"[EMAIL] Reset URL: {reset_url}")
+        print(f"[EMAIL] Backend: {settings.EMAIL_BACKEND}")
+        print(f"[EMAIL] Host User: {settings.EMAIL_HOST_USER}")
+
         send_mail(
             subject="Password Reset - Travello",
             message=f"Click the link to reset your password:\n\n{reset_url}\n\nThis link expires in 15 minutes.",
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[email],
-            fail_silently=True,  # Don't crash if email fails
+            fail_silently=False,  # Show errors instead of hiding them
         )
+        print(f"[EMAIL] Successfully sent to: {email}")
+
     except Exception as e:
-        print(f"Email error: {e}")
+        print(f"[EMAIL ERROR]: {e}")  # Will show in Render logs
 
 def forgot_password(request):
     if request.method == 'POST':
