@@ -3,78 +3,110 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
+import uuid
 
 def register(request):
     if request.user.is_authenticated:
         return redirect('index')
 
     if request.method == 'POST':
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+        confirm_password = request.POST.get('confirm_password', '')
 
-        if not email or not password:
-            messages.error(request, "Please fill in all required fields")
-            return redirect('register')
+        form_data = {
+            'first_name': first_name,
+            'last_name': last_name,
+            'email': email,
+        }
+
+        # ✅ Validate all required fields including first_name
+        if not all([first_name, email, password]):
+            messages.error(request, "Please fill in all required fields.")
+            return render(request, 'register.html', {'form_data': form_data})
 
         if password != confirm_password:
-            messages.error(request, "Passwords do not match")
-            return redirect('register')
+            messages.error(request, "Passwords do not match.")
+            return render(request, 'register.html', {'form_data': form_data})
+
+        # ✅ Strong password check
+        if len(password) < 8:
+            messages.error(request, "Password must be at least 8 characters.")
+            return render(request, 'register.html', {'form_data': form_data})
 
         if User.objects.filter(email=email).exists():
-            messages.error(request, "Email already registered")
-            return redirect('register')
-
+            messages.error(request, "Email already registered.")
+            return render(request, 'register.html', {'form_data': form_data})
 
         try:
-            user = User.objects.create_user(username=email, email=email, password=password)
-            user.first_name = first_name
-            user.last_name = last_name
-            user.save()
-            
+            # ✅ Generate unique username to avoid collision
+            unique_username = f"{first_name.lower()}_{uuid.uuid4().hex[:6]}"
+
+            user = User.objects.create_user(
+                username=unique_username,
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name
+            )
+
             messages.success(request, 'Account created! You can now log in.')
             return redirect('login')
+
         except Exception as e:
-            messages.error(request, "An error occurred during registration")
-            return redirect('register')
-            
+            messages.error(request, "An error occurred during registration. Please try again.")
+            return render(request, 'register.html', {'form_data': form_data})
+
     return render(request, 'register.html')
+
 
 def login_user(request):
     if request.user.is_authenticated:
         return redirect('index')
 
     if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+
+        if not email or not password:
+            messages.error(request, "Please fill in all fields.")
+            return render(request, 'login.html', {'next': request.GET.get('next', '')})
 
         try:
+            user_obj = User.objects.get(email=email)
 
-            user = User.objects.get(email=email)
-            if user.check_password(password):
+            # ✅ Use authenticate() instead of check_password directly
+            user = authenticate(request, username=user_obj.username, password=password)
+
+            if user is not None:
                 login(request, user)
-                
                 name = user.first_name if user.first_name else "Traveler"
                 messages.success(request, f"Welcome back, {name}!")
-                
-                next_url = request.GET.get('next')
-                if next_url:
+
+                # ✅ Check both GET and POST for next_url
+                next_url = request.POST.get('next') or request.GET.get('next')
+                if next_url and next_url.startswith('/'):  # ✅ Prevent open redirect
                     return redirect(next_url)
                 return redirect('index')
             else:
-                messages.error(request, "Invalid password")
+                messages.error(request, "Invalid password.")
+
         except User.DoesNotExist:
-            messages.error(request, "No account found with this email")
+            messages.error(request, "No account found with this email.")
 
-    return render(request, 'login.html')
+    # ✅ Pass next to template so hidden field carries it through POST
+    return render(request, 'login.html', {'next': request.GET.get('next', '')})
 
-@login_required(login_url='login')
-def index(request):
-    return render(request, 'index.html')
-
+@never_cache
 def logout_user(request):
     logout(request)
     messages.info(request, "Logged out successfully.")
     return redirect('index')
+
+@never_cache  # Prevents back button restoring after logout
+@login_required(login_url='login')
+def index(request):
+    return render(request, 'index.html')

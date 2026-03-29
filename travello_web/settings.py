@@ -1,12 +1,11 @@
 """
 Django settings for travello_web project.
 """
-
 from pathlib import Path
 import os
 import dj_database_url
 import cloudinary
-
+from dotenv import load_dotenv
 
 
 # --------------------------------------------------
@@ -15,9 +14,11 @@ import cloudinary
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 if os.path.exists(BASE_DIR / ".env"):
-    from dotenv import load_dotenv
     load_dotenv()
 
+DEBUG = os.environ.get("DEBUG", "True").lower() == "true"
+# ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 # --------------------------------------------------
 # SECURITY
 # --------------------------------------------------
@@ -26,9 +27,7 @@ SECRET_KEY = os.environ.get(
     "django-insecure-unsafe-key-change-in-production"
 )
 
-DEBUG = os.environ.get("DEBUG", "True") == "True" 
 
-ALLOWED_HOSTS = ["*"]
 
 
 CSRF_TRUSTED_ORIGINS = [
@@ -169,3 +168,4 @@ cloudinary.config(
 # DEFAULT PK
 # --------------------------------------------------
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+ROOT_URLCONF = 'travello_web.urls'
