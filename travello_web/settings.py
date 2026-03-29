@@ -134,7 +134,8 @@ else:
     EMAIL_HOST_USER = 'resend'
     EMAIL_HOST_PASSWORD = os.environ.get('RESEND_API_KEY')
     DEFAULT_FROM_EMAIL = 'onboarding@resend.dev'
-
+    
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY')
 SITE_URL = os.environ.get('SITE_URL', 'http://127.0.0.1:8000')
 
 # --------------------------------------------------

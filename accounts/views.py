@@ -9,25 +9,36 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .models import PasswordResetToken
 import threading
+import resend
+
 def send_reset_email(reset_url, email):
-    """Runs in background thread — won't block the request"""
     try:
         print(f"[EMAIL] Attempting to send to: {email}")
         print(f"[EMAIL] Reset URL: {reset_url}")
-        print(f"[EMAIL] Backend: {settings.EMAIL_BACKEND}")
-        print(f"[EMAIL] Host User: {settings.EMAIL_HOST_USER}")
 
-        send_mail(
-            subject="Password Reset - Travello",
-            message=f"Click the link to reset your password:\n\n{reset_url}\n\nThis link expires in 15 minutes.",
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=False,  # Show errors instead of hiding them
-        )
-        print(f"[EMAIL] Successfully sent to: {email}")
+        resend.api_key = settings.RESEND_API_KEY
+        
+        params = {
+            "from": "Travello <onboarding@resend.dev>",
+            "to": [email],
+            "subject": "Password Reset - Travello",
+            "html": f"""
+                <h2>Password Reset Request</h2>
+                <p>Click the link below to reset your password:</p>
+                <a href="{reset_url}" 
+                   style="background:#000;color:#fff;padding:12px 24px;
+                          text-decoration:none;border-radius:6px;">
+                   Reset Password
+                </a>
+                <p>This link expires in 15 minutes.</p>
+                <p>If you didn't request this, ignore this email.</p>
+            """,
+        }
+        response = resend.Emails.send(params)
+        print(f"[EMAIL] Sent successfully: {response}")
 
     except Exception as e:
-        print(f"[EMAIL ERROR]: {e}")  # Will show in Render logs
+        print(f"[EMAIL ERROR]: {e}")
 
 def forgot_password(request):
     if request.method == 'POST':
