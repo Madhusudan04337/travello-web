@@ -8,6 +8,20 @@ import uuid
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import PasswordResetToken
+import threading
+
+def send_reset_email(reset_url, email):
+    """Runs in background thread — won't block the request"""
+    try:
+        send_mail(
+            subject="Password Reset - Travello",
+            message=f"Click the link to reset your password:\n\n{reset_url}\n\nThis link expires in 15 minutes.",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            fail_silently=True,  # Don't crash if email fails
+        )
+    except Exception as e:
+        print(f"Email error: {e}")
 
 def forgot_password(request):
     if request.method == 'POST':
@@ -18,64 +32,24 @@ def forgot_password(request):
             PasswordResetToken.objects.filter(user=user).delete()
             token_obj = PasswordResetToken.objects.create(user=user)
 
-            # Link points to login page with form=reset&token=xxx
             reset_url = f"{settings.SITE_URL}/accounts/login/?form=reset&token={token_obj.token}"
 
-            send_mail(
-                subject="Password Reset - Travello",
-                message=f"Click the link to reset your password:\n\n{reset_url}\n\nThis link expires in 15 minutes.",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[email],
-                fail_silently=False,
+            # Send email in background — won't block gunicorn
+            thread = threading.Thread(
+                target=send_reset_email,
+                args=(reset_url, email)
             )
+            thread.daemon = True
+            thread.start()
+
         except User.DoesNotExist:
             pass
 
+        # Redirect immediately — don't wait for email
         messages.success(request, "If this email exists, a reset link has been sent.")
         return redirect('login')
 
     return redirect('login')
-
-def reset_password(request, token):
-    try:
-        token_obj = PasswordResetToken.objects.get(token=token)
-
-        # Check if token is expired
-        if token_obj.is_expired():
-            token_obj.delete()
-            messages.error(request, "Reset link has expired. Please request a new one.")
-            return redirect('forgot_password')
-
-    except PasswordResetToken.DoesNotExist:
-        messages.error(request, "Invalid reset link.")
-        return redirect('forgot_password')
-
-    if request.method == 'POST':
-        password = request.POST.get('password', '')
-        confirm_password = request.POST.get('confirm_password', '')
-
-        if not password or not confirm_password:
-            messages.error(request, "Please fill in all fields.")
-            return render(request, 'reset_password.html', {'token': token})
-
-        if password != confirm_password:
-            messages.error(request, "Passwords do not match.")
-            return render(request, 'reset_password.html', {'token': token})
-
-        if len(password) < 8:
-            messages.error(request, "Password must be at least 8 characters.")
-            return render(request, 'reset_password.html', {'token': token})
-
-        # Set new password and delete token
-        user = token_obj.user
-        user.set_password(password)
-        user.save()
-        token_obj.delete()
-
-        messages.success(request, "Password reset successful! You can now log in.")
-        return redirect('login')
-
-    return render(request, 'reset_password.html', {'token': token})
 
 def register(request):
     if request.user.is_authenticated:
@@ -148,7 +122,7 @@ def login_user(request):
         try:
             user_obj = User.objects.get(email=email)
 
-            # ✅ Use authenticate() instead of check_password directly
+            # Use authenticate() instead of check_password directly
             user = authenticate(request, username=user_obj.username, password=password)
 
             if user is not None:
@@ -156,7 +130,7 @@ def login_user(request):
                 name = user.first_name if user.first_name else "Traveler"
                 messages.success(request, f"Welcome back, {name}!")
 
-                # ✅ Check both GET and POST for next_url
+                # Check both GET and POST for next_url
                 next_url = request.POST.get('next') or request.GET.get('next')
                 if next_url and next_url.startswith('/'):  # ✅ Prevent open redirect
                     return redirect(next_url)
@@ -167,13 +141,13 @@ def login_user(request):
         except User.DoesNotExist:
             messages.error(request, "No account found with this email.")
 
-    # ✅ Pass next to template so hidden field carries it through POST
+    # Pass next to template so hidden field carries it through POST
     return render(request, 'login.html', {'next': request.GET.get('next', '')})
 
 @never_cache
 def logout_user(request):
     logout(request)
-    messages.info(request, "Logged out successfully.")
+    messages.success(request, "Logged out successfully.")
     return redirect('index')
 
 @never_cache  # Prevents back button restoring after logout
