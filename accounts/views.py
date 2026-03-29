@@ -1,15 +1,16 @@
+import threading
+import resend
+import uuid
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
-import uuid
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import PasswordResetToken
-import threading
-import resend
+from django.template.loader import render_to_string
 
 def send_reset_email(reset_url, email):
     try:
@@ -17,30 +18,24 @@ def send_reset_email(reset_url, email):
 
         resend.api_key = settings.RESEND_API_KEY
 
+        # Render HTML template with context
+        html_content = render_to_string('emails/password_reset.html', {
+            'reset_url': reset_url,
+        })
+
         params = {
             "from": "Travello <onboarding@resend.dev>",
             "to": [email],
             "subject": "Password Reset - Travello",
-            # ✅ Plain text only — no HTML links = no click tracking
-            "text": f"""Password Reset Request
-
-Click the link below to reset your password:
-
-{reset_url}
-
-This link expires in 15 minutes.
-
-If you didn't request this, ignore this email.
-
-— Travello Team
-""",
+            "html": html_content,
         }
 
         response = resend.Emails.send(params)
         print(f"[EMAIL] Sent successfully: {response}")
 
     except Exception as e:
-        print(f"[EMAIL ERROR]: {e}")   
+        print(f"[EMAIL ERROR]: {e}")
+
 def forgot_password(request):
     if request.method == 'POST':
         email = request.POST.get('email', '').strip()
