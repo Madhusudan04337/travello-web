@@ -14,32 +14,33 @@ import resend
 def send_reset_email(reset_url, email):
     try:
         print(f"[EMAIL] Attempting to send to: {email}")
-        print(f"[EMAIL] Reset URL: {reset_url}")
 
         resend.api_key = settings.RESEND_API_KEY
-        
+
         params = {
             "from": "Travello <onboarding@resend.dev>",
             "to": [email],
             "subject": "Password Reset - Travello",
-            "html": f"""
-                <h2>Password Reset Request</h2>
-                <p>Click the link below to reset your password:</p>
-                <a href="{reset_url}" 
-                   style="background:#000;color:#fff;padding:12px 24px;
-                          text-decoration:none;border-radius:6px;">
-                   Reset Password
-                </a>
-                <p>This link expires in 15 minutes.</p>
-                <p>If you didn't request this, ignore this email.</p>
-            """,
+            # ✅ Plain text only — no HTML links = no click tracking
+            "text": f"""Password Reset Request
+
+Click the link below to reset your password:
+
+{reset_url}
+
+This link expires in 15 minutes.
+
+If you didn't request this, ignore this email.
+
+— Travello Team
+""",
         }
+
         response = resend.Emails.send(params)
         print(f"[EMAIL] Sent successfully: {response}")
 
     except Exception as e:
-        print(f"[EMAIL ERROR]: {e}")
-
+        print(f"[EMAIL ERROR]: {e}")   
 def forgot_password(request):
     if request.method == 'POST':
         email = request.POST.get('email', '').strip()
