@@ -32,9 +32,7 @@
 				{% elif message.tags == 'error' %}alert-danger
 				{% elif message.tags == 'warning' %}alert-warning
 				{% elif message.tags == 'info' %}alert-info
-				{% else %}alert-dark{% endif %}"
-				role="alert"
-				style="box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+				{% else %}alert-dark{% endif %}" role="alert" style="box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
 				{{ message }}
 				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
@@ -235,12 +233,11 @@
 								<!-- Name -->
 								<div style="margin-bottom: 18px">
 									<input type="text" class="contact_input contact_input_name inpt"
-										placeholder="Your Name"
-										value="{{ user_name }}"
-										{% if request.user.is_authenticated %}disabled{% endif %}
-										{% if not request.user.is_authenticated %}name="name" required{% endif %}>
+										placeholder="Your Name" value="{{ user_name }}" {% if
+										request.user.is_authenticated %}disabled{% endif %} {% if not
+										request.user.is_authenticated %}name="name" required{% endif %}>
 									{% if request.user.is_authenticated %}
-										<input type="hidden" name="name" value="{{ user_name }}">
+									<input type="hidden" name="name" value="{{ user_name }}">
 									{% endif %}
 									<div class="input_border"></div>
 								</div>
@@ -250,12 +247,11 @@
 									<div class="col-lg-6" style="margin-bottom: 18px">
 										<div>
 											<input type="email" class="contact_input contact_input_email inpt"
-												placeholder="Your E-mail"
-												value="{{ user_email }}"
-												{% if request.user.is_authenticated %}disabled{% endif %}
-												{% if not request.user.is_authenticated %}name="email" required{% endif %}>
+												placeholder="Your E-mail" value="{{ user_email }}" {% if
+												request.user.is_authenticated %}disabled{% endif %} {% if not
+												request.user.is_authenticated %}name="email" required{% endif %}>
 											{% if request.user.is_authenticated %}
-												<input type="hidden" name="email" value="{{ user_email }}">
+											<input type="hidden" name="email" value="{{ user_email }}">
 											{% endif %}
 											<div class="input_border"></div>
 										</div>
@@ -265,9 +261,8 @@
 									<div class="col-lg-6" style="margin-bottom: 18px">
 										<div>
 											<input type="text" name="subject"
-												class="contact_input contact_input_subject inpt"
-												placeholder="Subject" required
-												value="{{ form_data.subject|default:'' }}">
+												class="contact_input contact_input_subject inpt" placeholder="Subject"
+												required value="{{ form_data.subject|default:'' }}">
 											<div class="input_border"></div>
 										</div>
 									</div>
@@ -276,7 +271,8 @@
 								<!-- Message -->
 								<div>
 									<textarea name="message" class="contact_textarea contact_input inpt"
-										placeholder="Message" rows="5" required>{{ form_data.message|default:'' }}</textarea>
+										placeholder="Message" rows="5"
+										required>{{ form_data.message|default:'' }}</textarea>
 									<div class="input_border" style="bottom:3px"></div>
 								</div>
 
@@ -299,12 +295,12 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<!-- Footer -->
 
 		<footer class="footer">
-			<div class="parallax_background parallax-window" 
-				data-image-src="{% static 'images/footer_1.jpg' %}" data-speed="0.8"></div>
+			<div class="background_image" style="background-image: url('{% static 'images/footer_1.jpg' %}');">
+			</div>
 			<div class="container">
 				<div class="row">
 					<div class="col">
