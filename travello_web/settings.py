@@ -1,3 +1,7 @@
+# --------------------------------------------------
+# LOGIN URL (for @login_required)
+# --------------------------------------------------
+LOGIN_URL = '/accounts/login/'
 """
 Django settings for travello_web project.
 """

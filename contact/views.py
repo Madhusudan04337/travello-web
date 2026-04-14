@@ -7,12 +7,12 @@ def contact(request):
         subject = request.POST.get('subject', '').strip()
         message = request.POST.get('message', '').strip()
 
-        # ✅ Authenticated — pull from user object (tamper-proof)
+        #  Authenticated — pull from user object (tamper-proof)
         if request.user.is_authenticated:
             name = request.user.get_full_name() or request.user.first_name
             email = request.user.email
         else:
-            # ✅ Not authenticated — take from POST (they typed it manually)
+            #  Not authenticated — take from POST (they typed it manually)
             name = request.POST.get('name', '').strip()
             email = request.POST.get('email', '').strip()
 
@@ -24,14 +24,14 @@ def contact(request):
                 'user_email': email,
             })
 
-        # ✅ Not logged in — save to session, redirect to login
+        #  Not logged in — save to session, redirect to login
         if not request.user.is_authenticated:
             request.session['pending_contact'] = {
                 'name': name, 'email': email,
                 'subject': subject, 'message': message
             }
             messages.warning(request, "Please login to send your message.")
-            return redirect('/login/?next=/contact/')
+            return redirect('/accounts/login/?next=/contact/')
 
         # ✅ Logged in — save to DB
         ContactMessage.objects.create(
