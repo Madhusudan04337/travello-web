@@ -233,9 +233,10 @@
 								<!-- Name -->
 								<div style="margin-bottom: 18px">
 									<input type="text" class="contact_input contact_input_name inpt"
-										placeholder="Your Name" value="{{ user_name }}" {% if
-										request.user.is_authenticated %}disabled{% endif %} {% if not
-										request.user.is_authenticated %}name="name" required{% endif %}>
+										placeholder="Your Name" 
+										value="{{ user_name }}" 
+										{% if request.user.is_authenticated %}disabled{% endif %} 
+										{% if not request.user.is_authenticated %}name="name" required{% endif %}>
 									{% if request.user.is_authenticated %}
 									<input type="hidden" name="name" value="{{ user_name }}">
 									{% endif %}
@@ -247,9 +248,10 @@
 									<div class="col-lg-6" style="margin-bottom: 18px">
 										<div>
 											<input type="email" class="contact_input contact_input_email inpt"
-												placeholder="Your E-mail" value="{{ user_email }}" {% if
-												request.user.is_authenticated %}disabled{% endif %} {% if not
-												request.user.is_authenticated %}name="email" required{% endif %}>
+												placeholder="Your E-mail" 
+												value="{{ user_email }}" 
+												{% if request.user.is_authenticated %}disabled{% endif %}
+												{% if not request.user.is_authenticated %}name="email" required{% endif %}>
 											{% if request.user.is_authenticated %}
 											<input type="hidden" name="email" value="{{ user_email }}">
 											{% endif %}
